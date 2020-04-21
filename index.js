@@ -4,9 +4,11 @@ const reduxLogger = require('redux-logger');
 const { createStore, combineReducers, applyMiddleware } = redux;
 const { logger = createLogger } = reduxLogger;
 
+// action types
 const BUY_CAKE = 'BUY_CAKES'
 const BUY_ICECREAM = 'BUY_ICECREAM'
 
+// action creators
 function buyCake(){
     return {
         type: BUY_CAKE,
@@ -28,6 +30,7 @@ function buyIceCream(){
 
 // }
 
+// global state
 const initialCakeState = {
     numOfCakes: 10
 }
