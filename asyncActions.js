@@ -1,6 +1,8 @@
 const redux = require('redux');
-const reduxThunk = require('redux-thunk').default; // .default to be added, because of redux-thunk version 2.x
+const thunk = require('redux-thunk').default; // .default to be added, because of redux-thunk version 2.x
 // redux thunk allows an action creator to return a function instead of an action, the function can then be used to perform asynchronous tasks
+// and takes in dispatch and getState as its parameters
+
 const axios = require('axios');
 const { createStore, applyMiddleware } = redux;
 
@@ -61,12 +63,20 @@ const reducer = (state = initialState, action) => {
     }
 }
 
+// accepts dispatch and getState as argument, can also accept multiple arguments by passing
+// thunk.withExtraArgument(parameterName) or thunk.withExtraArgument({ parameter1, parameter2 }) to applyMiddleware()
+
 const fetchUsers = () => {
     return function(dispatch){
         dispatch(fetchUserRequest())
         axios.get('https://jsonplaceholder.typicode.com/users')
             .then(response => {
-                const user = response.data.map(user => user.id)
+                const user = response.data.map(user => {
+                        return {
+                            id: user.id,
+                            name: user.name
+                        } 
+                    })
                 dispatch(fetchUserSuccess(user))
             })
             .catch(error => {
@@ -75,10 +85,10 @@ const fetchUsers = () => {
     }
 }
 
-const store = createStore(reducer, applyMiddleware(reduxThunk))
+const store = createStore(reducer, applyMiddleware(thunk))
 
 store.subscribe(() => { console.log(store.getState() )})
 
-store.dispatch(fetchUsers());
+store.dispatch(fetchUsers())
 
 // run with "node ./asyncActions" or "node asyncActions" from root directory
